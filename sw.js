@@ -11,29 +11,29 @@ const DYNAMIC_CACHE_NAME = `sudoku-dynamic-${CACHE_VERSION}`;
 
 // GitHub Pages 경로에 맞게 수정된 정적 파일들
 const STATIC_FILES = [
-  '/sudoku/',
-  '/sudoku/index.html',
-  '/sudoku/css/style.css',
-  '/sudoku/js/app.js',
-  '/sudoku/js/game.js',
-  '/sudoku/js/ui.js',
-  '/sudoku/js/storage.js',
-  '/sudoku/js/audioManager.js',
-  '/sudoku/js/security.js',
-  '/sudoku/js/smartHints.js',
-  '/sudoku/js/dailyChallenge.js',
-  '/sudoku/js/achievements.js',
-  '/sudoku/js/autoSolver.js',
-  '/sudoku/js/aiDifficulty.js',
-  '/sudoku/js/userAnalytics.js',
-  '/sudoku/js/pwaManager.js',
-  '/sudoku/js/shop.js',
-  '/sudoku/js/themeManager.js',
-  '/sudoku/js/trophyRewards.js',
-  '/sudoku/js/levelSystem.js',
-  '/sudoku/manifest.json',
-  '/sudoku/icons/icon-192x192.svg',
-  '/sudoku/icons/icon-512x512.svg'
+  '/SUDOKU_GAME_NEW/',
+  '/SUDOKU_GAME_NEW/index.html',
+  '/SUDOKU_GAME_NEW/css/style.css',
+  '/SUDOKU_GAME_NEW/js/app.js',
+  '/SUDOKU_GAME_NEW/js/game.js',
+  '/SUDOKU_GAME_NEW/js/ui.js',
+  '/SUDOKU_GAME_NEW/js/storage.js',
+  '/SUDOKU_GAME_NEW/js/audioManager.js',
+  '/SUDOKU_GAME_NEW/js/security.js',
+  '/SUDOKU_GAME_NEW/js/smartHints.js',
+  '/SUDOKU_GAME_NEW/js/dailyChallenge.js',
+  '/SUDOKU_GAME_NEW/js/achievements.js',
+  '/SUDOKU_GAME_NEW/js/autoSolver.js',
+  '/SUDOKU_GAME_NEW/js/aiDifficulty.js',
+  '/SUDOKU_GAME_NEW/js/userAnalytics.js',
+  '/SUDOKU_GAME_NEW/js/pwaManager.js',
+  '/SUDOKU_GAME_NEW/js/shop.js',
+  '/SUDOKU_GAME_NEW/js/themeManager.js',
+  '/SUDOKU_GAME_NEW/js/trophyRewards.js',
+  '/SUDOKU_GAME_NEW/js/levelSystem.js',
+  '/SUDOKU_GAME_NEW/manifest.json',
+  '/SUDOKU_GAME_NEW/icons/icon-192x192.svg',
+  '/SUDOKU_GAME_NEW/icons/icon-512x512.svg'
 ];
 
 // 동적 파일들 (필요할 때 캐시할 파일들)
@@ -145,10 +145,10 @@ self.addEventListener('fetch', (event) => {
             // 오프라인 페이지나 기본 응답 반환
             if (request.url.endsWith('.html') || 
                 request.url === location.origin + '/' || 
-                request.url === location.origin + '/sudoku/' ||
-                request.url.endsWith('/sudoku') ||
-                request.url.endsWith('/sudoku/')) {
-              return caches.match('/sudoku/index.html');
+                request.url === location.origin + '/SUDOKU_GAME_NEW/' ||
+                request.url.endsWith('/SUDOKU_GAME_NEW') ||
+                request.url.endsWith('/SUDOKU_GAME_NEW/')) {
+              return caches.match('/SUDOKU_GAME_NEW/index.html');
             }
             
             // 이미지나 기타 리소스의 경우 기본 응답
@@ -233,7 +233,7 @@ self.addEventListener('notificationclick', (event) => {
   
   if (event.action === 'explore') {
     event.waitUntil(
-      clients.openWindow('/sudoku/')
+      clients.openWindow('/SUDOKU_GAME_NEW/')
     );
   } else if (event.action === 'close') {
     // 알림만 닫기
@@ -241,7 +241,7 @@ self.addEventListener('notificationclick', (event) => {
   } else {
     // 기본 동작: 앱 열기
     event.waitUntil(
-      clients.openWindow('/sudoku/')
+      clients.openWindow('/SUDOKU_GAME_NEW/')
     );
   }
 });
