@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>스도쿠 게임</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="온라인 스도쿠 퍼즐 게임 - 다양한 난이도와 기능을 제공하는 웹 기반 스도쿠">
+    <meta name="keywords" content="스도쿠, 퍼즐, 게임, 온라인, 웹게임, 숫자퍼즐">
+    <meta name="author" content="스도쿠 게임">
+    <meta name="theme-color" content="#2E86AB">
+    <meta name="msapplication-TileColor" content="#2E86AB">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="스도쿠">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="./manifest.json">
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="./icons/icon-192x192.svg">
+    <link rel="apple-touch-icon" sizes="152x152" href="./icons/icon-152x152.svg">
+    <link rel="apple-touch-icon" sizes="180x180" href="./icons/icon-192x192.svg">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" sizes="32x32" href="./icons/icon-32x32.svg">
+    <link rel="icon" type="image/svg+xml" sizes="16x16" href="./icons/icon-16x16.svg">
+    <link rel="shortcut icon" href="./icons/icon-32x32.svg">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- 헤더 영역 -->
+        <header class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <h1 class="logo">스도쿠</h1>
+                    <button class="btn btn-profile" id="profile-btn" title="내 프로필">
+                        <span class="profile-level">Lv.1</span>
+                        <span class="profile-nickname">게스트</span>
+                    </button>
+                </div>
+                <div class="header-right">
+                    <button class="settings-btn" id="game-rules-btn" aria-label="게임방법">
+                        ❓
+                    </button>
+                    <button class="settings-btn" id="settings-btn" aria-label="설정">
+                        ⚙️
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- 메인 게임 영역 -->
+        <main class="main-content">
+            <div class="game-container">
+                <!-- 게임 보드 -->
+                <div class="game-board-container">
+                    <div class="game-board" id="game-board">
+                        <!-- 9x9 스도쿠 그리드가 여기에 동적으로 생성됩니다 -->
+                    </div>
+                </div>
+
+                <!-- 게임 정보 및 컨트롤 -->
+                <div class="game-controls">
+                    <div class="game-info">
+                        <div class="timer">
+                            <span class="timer-label">시간</span>
+                            <span class="timer-value" id="timer">00:00</span>
+                        </div>
+                        <div class="hints">
+                            <span class="hints-label">힌트</span>
+                            <span class="hints-value" id="hints">3</span>
+                        </div>
+                        <div class="progress">
+                            <span class="progress-label">진행률</span>
+                            <span class="progress-value" id="progress">0/81</span>
+                        </div>
+                    </div>
+
+                    <!-- 숫자 입력 패드 -->
+                    <div class="number-pad" id="number-pad">
+                        <button class="number-btn" data-number="1">1</button>
+                        <button class="number-btn" data-number="2">2</button>
+                        <button class="number-btn" data-number="3">3</button>
+                        <button class="number-btn" data-number="4">4</button>
+                        <button class="number-btn" data-number="5">5</button>
+                        <button class="number-btn" data-number="6">6</button>
+                        <button class="number-btn" data-number="7">7</button>
+                        <button class="number-btn" data-number="8">8</button>
+                        <button class="number-btn" data-number="9">9</button>
+                        <button class="delete-btn" id="delete-btn" aria-label="삭제">⌫</button>
+                        <button class="hint-btn" id="hint-btn" aria-label="힌트">💡</button>
+                        <button class="smart-hint-btn" id="smart-hint-btn" aria-label="스마트 힌트">🧠</button>
+                    </div>
+
+                    <!-- 액션 버튼들 -->
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" id="new-game-btn">새 게임</button>
+                        <button class="btn btn-success" id="check-answer-btn">✅ 정답 확인</button>
+                        <button class="btn btn-secondary" id="daily-challenge-btn">🏆 일일 도전</button>
+                        <button class="btn btn-secondary" id="achievements-btn">🏅 업적</button>
+                        <button class="btn btn-secondary" id="trophies-btn">🏆 트로피</button>
+                        <button class="btn btn-secondary" id="trophy-rewards-btn">🎁 보상</button>
+                        <button class="btn btn-secondary" id="shop-btn">🛒 상점</button>
+                        <button class="btn btn-secondary" id="save-game-btn">저장</button>
+                        <button class="btn btn-secondary" id="load-game-btn">불러오기</button>
+                        <button class="btn btn-secondary" id="undo-btn">되돌리기</button>
+                        <button class="btn btn-warning" id="show-answer-btn">📋 정답 보기</button>
+                <button class="btn btn-info" id="auto-solve-btn">🤖 자동 풀이</button>
+                        <button class="btn btn-secondary" id="solve-step-btn">➡️ 한 단계</button>
+                        <button class="btn btn-success" id="ai-difficulty-btn">🧠 AI 난이도</button>
+                        <button class="btn btn-info" id="analytics-btn">📊 행동 분석</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 모달들 -->
+        <div class="modal" id="difficulty-modal">
+            <div class="modal-content">
+                <h2>게임 설정</h2>
+                
+                <div class="game-settings-section">
+                    <h3>보드 크기</h3>
+                    <div class="board-size-options">
+                        <button class="board-size-btn" data-size="6">
+                            <div class="size-preview size-6">6×6</div>
+                        </button>
+                        <button class="board-size-btn selected" data-size="9">
+                            <div class="size-preview size-9">9×9</div>
+                        </button>
+                        <button class="board-size-btn" data-size="12">
+                            <div class="size-preview size-12">12×12</div>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="game-settings-section">
+                    <h3>난이도</h3>
+                    <div class="difficulty-options">
+                        <button class="difficulty-btn" data-difficulty="easy">쉬움</button>
+                        <button class="difficulty-btn selected" data-difficulty="medium">보통</button>
+                        <button class="difficulty-btn" data-difficulty="hard">어려움</button>
+                    </div>
+                </div>
+                
+                <div class="modal-buttons">
+                    <button class="btn btn-primary" id="start-game-btn">게임 시작</button>
+                    <button class="btn btn-secondary" id="close-difficulty-modal">닫기</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="settings-modal">
+            <div class="modal-content">
+                <h2>설정</h2>
+                
+                <div class="settings-scroll-area">
+                    <div class="settings-section">
+                        <h3>테마</h3>
+                        <div class="theme-options">
+                            <button class="theme-btn selected" data-theme="light">
+                                <span class="theme-icon">☀️</span>
+                                <span>라이트</span>
+                            </button>
+                            <button class="theme-btn" data-theme="dark">
+                                <span class="theme-icon">🌙</span>
+                                <span>다크</span>
+                            </button>
+                            <button class="theme-btn" data-theme="blue">
+                                <span class="theme-icon">💙</span>
+                                <span>블루</span>
+                            </button>
+                            <button class="theme-btn" data-theme="green">
+                                <span class="theme-icon">💚</span>
+                                <span>그린</span>
+                            </button>
+                        </div>
+                        
+                        <!-- 구매한 테마 섹션 -->
+                        <div class="purchased-themes-section" id="purchased-themes-section" style="display: none;">
+                            <h4>구매한 테마</h4>
+                            <div class="purchased-theme-options" id="purchased-theme-options">
+                                <!-- 구매한 테마들이 여기에 동적으로 추가됩니다 -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h3>프로필 관리</h3>
+                        <div class="profile-management">
+                            <div class="profile-info-display">
+                                <div class="profile-avatar-small">
+                                    <div class="avatar-icon-small" id="settings-profile-avatar">
+                                        🌱
+                                    </div>
+                                </div>
+                                <div class="profile-details-small">
+                                    <div class="profile-nickname-small" id="settings-profile-nickname">게스트</div>
+                                    <div class="profile-level-small" id="settings-profile-level">Lv.1 초보자</div>
+                                </div>
+                            </div>
+                            <div class="profile-actions">
+                                <button class="btn btn-secondary" id="change-nickname-btn">닉네임 변경</button>
+                                <button class="btn btn-warning" id="reset-profile-btn">프로필 초기화</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h3>게임 설정</h3>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="show-timer" checked>
+                                타이머 표시
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="auto-save" checked>
+                                자동 저장
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="animations" checked>
+                                애니메이션 효과
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="accessibility-mode">
+                                접근성 모드 (색약자 지원)
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="sound-effects" checked>
+                                사운드 효과
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="pwa-install">
+                                PWA 설치 (앱으로 사용)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-buttons">
+                    <button class="btn btn-warning" id="reset-theme-btn">기본 테마로 복원</button>
+                    <button class="btn btn-primary" id="save-settings">저장</button>
+                    <button class="btn btn-secondary" id="close-settings-modal">닫기</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="game-complete-modal">
+            <div class="modal-content">
+                <h2>🎉 축하합니다!</h2>
+                <p>게임을 완료했습니다!</p>
+                <div class="completion-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">완료 시간:</span>
+                        <span class="stat-value" id="completion-time"></span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">힌트 사용:</span>
+                        <span class="stat-value" id="hints-used"></span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">이동 횟수:</span>
+                        <span class="stat-value" id="move-count"></span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">오류 횟수:</span>
+                        <span class="stat-value" id="error-count"></span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">평균 이동 시간:</span>
+                        <span class="stat-value" id="avg-move-time"></span>
+                    </div>
+                </div>
+                <div class="modal-buttons">
+                    <button class="btn btn-primary" id="play-again-btn">다시 플레이</button>
+                    <button class="btn btn-secondary" id="view-stats-btn">통계 보기</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="game-list-modal">
+            <div class="modal-content">
+                <h2>💾 저장된 게임</h2>
+                <div class="game-list-header">
+                    <button class="btn btn-primary" id="new-game-from-list">새 게임</button>
+                    <button class="btn btn-secondary" id="refresh-game-list">새로고침</button>
+                </div>
+                <div class="game-list" id="game-list">
+                    <!-- 저장된 게임 목록이 여기에 동적으로 생성됩니다 -->
+                </div>
+                <div class="modal-buttons">
+                    <button class="btn btn-secondary" id="close-game-list-modal">닫기</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="daily-challenge-modal">
+            <div class="modal-content">
+                <h2>🏆 일일 도전</h2>
+                <div class="challenge-info">
+                    <div class="challenge-date">
+                        <span class="challenge-label">오늘의 날짜:</span>
+                        <span class="challenge-value" id="challenge-date"></span>
+                    </div>
+                    <div class="challenge-difficulty">
+                        <span class="challenge-label">난이도:</span>
+                        <span class="challenge-value" id="challenge-difficulty"></span>
+                    </div>
+                    <div class="challenge-progress">
+                        <span class="challenge-label">진행률:</span>
+                        <span class="challenge-value" id="challenge-progress">0%</span>
+                    </div>
+                </div>
+                <div class="challenge-description">
+                    <p>매일 새로운 퍼즐에 도전해보세요!</p>
+                    <p>일일 도전을 완료하면 특별한 업적을 얻을 수 있습니다.</p>
+                </div>
+                <div class="challenge-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">연속 완료:</span>
+                        <span class="stat-value" id="streak-count">0일</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">총 완료:</span>
+                        <span class="stat-value" id="total-completed">0일</span>
+                    </div>
+                </div>
+                <div class="modal-buttons">
+                    <button class="btn btn-primary" id="start-daily-challenge">도전 시작</button>
+                    <button class="btn btn-secondary" id="close-daily-challenge-modal">닫기</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="smart-hint-modal">
+            <div class="modal-content">
+                <h2>🧠 스마트 힌트</h2>
+                <div class="smart-hint-content">
+                    <div class="hint-icon" id="hint-icon">💡</div>
+                    <div class="hint-message" id="hint-message"></div>
+                    <div class="hint-description" id="hint-description"></div>
+                    <div class="hint-details" id="hint-details"></div>
+                </div>
+                <div class="modal-buttons">
+                    <button class="btn btn-primary" id="apply-smart-hint">적용하기</button>
+                    <button class="btn btn-secondary" id="close-smart-hint-modal">닫기</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 자동 풀이 모달 -->
+        <div class="modal" id="auto-solve-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>🤖 자동 풀이</h2>
+                    <button class="close-btn" id="close-auto-solve-modal">&times;</button>
+                </div>
+                <div class="auto-solve-content">
+                    <div class="solve-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="solve-progress-fill"></div>
+                        </div>
+                        <div class="progress-text" id="solve-progress-text">0%</div>
+                    </div>
+                    <div class="solve-status" id="solve-status">풀이 준비 중...</div>
+                    <div class="solve-controls">
+                        <button class="btn btn-warning" id="stop-solve-btn">중지</button>
+                        <button class="btn btn-secondary" id="close-solve-modal-btn">닫기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI 난이도 모달 -->
+        <div class="modal" id="ai-difficulty-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>🧠 AI 난이도 분석</h2>
+                    <button class="close-btn" id="close-ai-difficulty-modal">&times;</button>
+                </div>
+                <div class="ai-difficulty-content">
+                    <div class="player-stats">
+                        <h3>플레이어 통계</h3>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <span class="stat-label">스킬 레벨:</span>
+                                <span class="stat-value" id="ai-skill-level">-</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">스킬 점수:</span>
+                                <span class="stat-value" id="ai-skill-score">-</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">플레이한 게임:</span>
+                                <span class="stat-value" id="ai-games-played">-</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">평균 해결 시간:</span>
+                                <span class="stat-value" id="ai-avg-time">-</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">평균 오류율:</span>
+                                <span class="stat-value" id="ai-error-rate">-</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">힌트 사용률:</span>
+                                <span class="stat-value" id="ai-hint-usage">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="ai-recommendation">
+                        <h3>AI 추천</h3>
+                        <div class="recommendation-card">
+                            <div class="recommended-difficulty" id="ai-recommended-difficulty">-</div>
+                            <div class="recommendation-reason" id="ai-recommendation-reason">-</div>
+                            <div class="recommendation-confidence" id="ai-confidence">신뢰도: -</div>
+                        </div>
+                    </div>
+                    
+                    <div class="ai-actions">
+                        <button class="btn btn-primary" id="apply-ai-difficulty">추천 난이도로 새 게임</button>
+                        <button class="btn btn-secondary" id="reset-ai-profile">프로필 초기화</button>
+                        <button class="btn btn-secondary" id="close-ai-modal-btn">닫기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 사용자 분석 모달 -->
+        <div class="modal" id="analytics-modal">
+            <div class="modal-content analytics-modal-content">
+                <div class="modal-header">
+                    <h2>📊 사용자 행동 분석</h2>
+                    <button class="close-btn" id="close-analytics-modal">×</button>
+                </div>
+                <div class="analytics-content">
+                    <!-- 개요 섹션 -->
+                    <div class="analytics-section">
+                        <h3>📈 플레이 개요</h3>
+                        <div class="overview-grid">
+                            <div class="overview-item">
+                                <span class="overview-label">총 게임 수</span>
+                                <span class="overview-value" id="total-games">-</span>
+                            </div>
+                            <div class="overview-item">
+                                <span class="overview-label">평균 효율성</span>
+                                <span class="overview-value" id="avg-efficiency">-</span>
+                            </div>
+                            <div class="overview-item">
+                                <span class="overview-label">평균 일관성</span>
+                                <span class="overview-value" id="avg-consistency">-</span>
+                            </div>
+                            <div class="overview-item">
+                                <span class="overview-label">학습 곡선</span>
+                                <span class="overview-value" id="learning-curve">-</span>
+                            </div>
+                            <div class="overview-item">
+                                <span class="overview-label">스트레스 레벨</span>
+                                <span class="overview-value" id="stress-level">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 행동 패턴 섹션 -->
+                    <div class="analytics-section">
+                        <h3>🎯 행동 패턴</h3>
+                        <div class="pattern-grid">
+                            <div class="pattern-item">
+                                <span class="pattern-label">플레이 스타일</span>
+                                <span class="pattern-value" id="play-style">-</span>
+                            </div>
+                            <div class="pattern-item">
+                                <span class="pattern-label">힌트 사용 패턴</span>
+                                <span class="pattern-value" id="hint-pattern">-</span>
+                            </div>
+                            <div class="pattern-item">
+                                <span class="pattern-label">오류 회복 패턴</span>
+                                <span class="pattern-value" id="error-recovery">-</span>
+                            </div>
+                            <div class="pattern-item">
+                                <span class="pattern-label">되돌리기 패턴</span>
+                                <span class="pattern-value" id="undo-pattern">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 인사이트 섹션 -->
+                    <div class="analytics-section">
+                        <h3>💡 인사이트</h3>
+                        <div class="insights-container">
+                            <div class="insight-category">
+                                <h4>강점</h4>
+                                <ul id="strengths-list"></ul>
+                            </div>
+                            <div class="insight-category">
+                                <h4>개선점</h4>
+                                <ul id="weaknesses-list"></ul>
+                            </div>
+                            <div class="insight-category">
+                                <h4>추천사항</h4>
+                                <ul id="recommendations-list"></ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 트렌드 섹션 -->
+                    <div class="analytics-section">
+                        <h3>📊 트렌드</h3>
+                        <div class="trends-container" id="trends-container">
+                            <!-- 동적으로 생성 -->
+                        </div>
+                    </div>
+
+                    <!-- 액션 버튼 -->
+                    <div class="analytics-actions">
+                        <button class="btn btn-primary" id="refresh-analytics">새로고침</button>
+                        <button class="btn btn-warning" id="reset-analytics">데이터 초기화</button>
+                        <button class="btn btn-secondary" id="close-analytics-btn">닫기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 게임방법 모달 -->
+    <div id="game-rules-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🎯 스도쿠 게임방법</h2>
+                <button class="close-btn" id="close-game-rules-btn">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="rules-container">
+                    <!-- 기본 규칙 -->
+                    <div class="rule-section">
+                        <h3>📋 기본 규칙</h3>
+                        <p>스도쿠는 숫자 퍼즐 게임입니다. 다음 3가지 규칙을 모두 만족해야 합니다:</p>
+                        <ul>
+                            <li><strong>행 규칙:</strong> 각 가로줄에 1부터 N까지의 숫자가 중복 없이 하나씩</li>
+                            <li><strong>열 규칙:</strong> 각 세로줄에 1부터 N까지의 숫자가 중복 없이 하나씩</li>
+                            <li><strong>박스 규칙:</strong> 각 박스에 1부터 N까지의 숫자가 중복 없이 하나씩</li>
+                        </ul>
+                    </div>
+
+                    <!-- 보드 크기별 규칙 -->
+                    <div class="rule-section">
+                        <h3>🎮 보드 크기별 규칙</h3>
+                        
+                        <div class="board-rule">
+                            <h4>🟦 6×6 스도쿠</h4>
+                            <div class="rule-details">
+                                <p><strong>격자:</strong> 6행 × 6열 (총 36칸)</p>
+                                <p><strong>사용 숫자:</strong> 1 ~ 6</p>
+                                <p><strong>박스:</strong> 2행 × 3열 박스 (총 6개)</p>
+                                <div class="box-example">
+                                    <div class="mini-grid size-6">
+                                        <div class="mini-cell">1</div><div class="mini-cell">2</div><div class="mini-cell">3</div>
+                                        <div class="mini-cell">4</div><div class="mini-cell">5</div><div class="mini-cell">6</div>
+                                    </div>
+                                    <span>← 2×3 박스 예시</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="board-rule">
+                            <h4>🟩 9×9 스도쿠 (표준)</h4>
+                            <div class="rule-details">
+                                <p><strong>격자:</strong> 9행 × 9열 (총 81칸)</p>
+                                <p><strong>사용 숫자:</strong> 1 ~ 9</p>
+                                <p><strong>박스:</strong> 3행 × 3열 박스 (총 9개)</p>
+                                <div class="box-example">
+                                    <div class="mini-grid size-9">
+                                        <div class="mini-cell">1</div><div class="mini-cell">2</div><div class="mini-cell">3</div>
+                                        <div class="mini-cell">4</div><div class="mini-cell">5</div><div class="mini-cell">6</div>
+                                        <div class="mini-cell">7</div><div class="mini-cell">8</div><div class="mini-cell">9</div>
+                                    </div>
+                                    <span>← 3×3 박스 예시</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="board-rule">
+                            <h4>🟥 12×12 스도쿠</h4>
+                            <div class="rule-details">
+                                <p><strong>격자:</strong> 12행 × 12열 (총 144칸)</p>
+                                <p><strong>사용 숫자:</strong> 1 ~ 12</p>
+                                <p><strong>박스:</strong> 3행 × 4열 박스 (총 12개)</p>
+                                <div class="box-example">
+                                    <div class="mini-grid size-12">
+                                        <div class="mini-cell">1</div><div class="mini-cell">2</div><div class="mini-cell">3</div><div class="mini-cell">4</div>
+                                        <div class="mini-cell">5</div><div class="mini-cell">6</div><div class="mini-cell">7</div><div class="mini-cell">8</div>
+                                        <div class="mini-cell">9</div><div class="mini-cell">10</div><div class="mini-cell">11</div><div class="mini-cell">12</div>
+                                    </div>
+                                    <span>← 3×4 박스 예시</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 게임 방법 -->
+                    <div class="rule-section">
+                        <h3>🎯 게임 방법</h3>
+                        <ol>
+                            <li><strong>빈 칸 선택:</strong> 채우고 싶은 빈 칸을 클릭합니다</li>
+                            <li><strong>숫자 입력:</strong> 하단의 숫자 버튼을 클릭하거나 키보드로 입력합니다</li>
+                            <li><strong>힌트 사용:</strong> 막힐 때는 힌트 버튼(?)을 사용하세요</li>
+                            <li><strong>정답 확인:</strong> 모든 칸을 채운 후 "정답 확인" 버튼을 누르세요</li>
+                            <li><strong>완료:</strong> 정답이면 축하 모달이 나타납니다!</li>
+                        </ol>
+                    </div>
+
+                    <!-- 팁 -->
+                    <div class="rule-section">
+                        <h3>💡 게임 팁</h3>
+                        <ul>
+                            <li>각 박스는 색상으로 구분되어 있어 규칙을 쉽게 확인할 수 있습니다</li>
+                            <li>빨간색 테두리는 잘못된 입력을 나타냅니다</li>
+                            <li>파란색 숫자는 미리 주어진 숫자입니다</li>
+                            <li>검은색 숫자는 사용자가 입력한 숫자입니다</li>
+                            <li>작은 보드(6×6)부터 시작해서 점진적으로 어려운 보드에 도전하세요</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="close-game-rules-btn-footer">확인</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="js/security.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/audioManager.js"></script>
+    <script src="js/pwaManager.js"></script>
+    <script src="js/autoSolver.js"></script>
+    <script src="js/aiDifficulty.js"></script>
+    <script src="js/userAnalytics.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/smartHints.js"></script>
+    <script src="js/achievements.js"></script>
+    <script src="js/shop.js"></script>
+    <script src="js/themeManager.js"></script>
+    <script src="js/trophyRewards.js"></script>
+    <script src="js/levelSystem.js"></script>
+    <script src="js/dailyChallenge.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
